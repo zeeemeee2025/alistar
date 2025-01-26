@@ -1,88 +1,69 @@
+// app/posts/[id]/page.tsx
 "use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PenLine } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import Link from "next/link";
+import { CommentsSection } from "@/components/comments/comments-section";
 import { AuthModal } from "@/components/auth-modal";
 
-export default function HomePage() {
+export default function PostPage({ params }: { params: { id: string } }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // TODO: 실제 인증 상태로 대체
 
-  const openLoginModal = () => {
-    setAuthMode("login");
-    setIsAuthModalOpen(true);
-  };
-
-  const openSignupModal = () => {
-    setAuthMode("signup");
-    setIsAuthModalOpen(true);
-  };
-
-  const handleNewPost = () => {
-    // If user is not logged in, show login modal
-    openLoginModal();
-    // TODO: Redirect to new post page when authenticated
-  };
+  // 예시 댓글 데이터
+  const comments = [
+    {
+      id: "1",
+      content: "정말 유익한 글이네요!",
+      author: {
+        name: "김개발",
+      },
+      createdAt: new Date(2024, 0, 15),
+    },
+    {
+      id: "2",
+      content: "이 부분에 대해 더 자세히 설명해주실 수 있나요?",
+      author: {
+        name: "이코딩",
+      },
+      createdAt: new Date(2024, 0, 16),
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">DevBlog</h1>
-          <nav className="flex items-center gap-3">
-            <Button
-              variant="default"
-              onClick={handleNewPost}
-              className="flex items-center gap-2"
-            >
-              <PenLine className="w-4 h-4" />새 글 작성
-            </Button>
-            <Button variant="ghost" onClick={openLoginModal}>
-              로그인
-            </Button>
-            <Button variant="default" onClick={openSignupModal}>
-              회원가입
-            </Button>
-          </nav>
-        </div>
-      </header>
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[1, 2, 3, 4, 5, 6].map((post) => (
-                <Card key={post}>
-                  <CardHeader>
-                    <CardTitle>블로그 포스트 제목 {post}</CardTitle>
-                    <CardDescription>작성자: 개발자{post}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p>
-                      이 블로그 포스트는 흥미로운 개발 주제에 대해 다룹니다...
-                    </p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="outline">읽기</Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="bg-white shadow-sm rounded-lg p-6">
+          <div className="mb-4">
+            <Link href="/">
+              <Button variant="ghost">← 목록으로</Button>
+            </Link>
+          </div>
+
+          <article className="prose max-w-none mb-12">
+            <h1 className="text-3xl font-bold mb-4">
+              블로그 포스트 제목 {params.id}
+            </h1>
+            <div className="text-gray-600 mb-6">작성자: 개발자{params.id}</div>
+            <p>게시물 내용...</p>
+          </article>
+
+          <div className="border-t pt-8">
+            <CommentsSection
+              postId={params.id}
+              isLoggedIn={isLoggedIn}
+              onLogin={() => setIsAuthModalOpen(true)}
+              comments={comments}
+            />
           </div>
         </div>
       </main>
+
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        initialMode={authMode}
+        initialMode="login"
       />
     </div>
   );
