@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link"; // next/link 추가
 import { Button } from "@/components/ui/button";
 import { PenLine } from "lucide-react";
 import {
@@ -72,9 +71,7 @@ export default function HomePage() {
                     </p>
                   </CardContent>
                   <CardFooter>
-                    <Link href={`/posts/${post}`}>
-                      <Button variant="outline">읽기</Button>
-                    </Link>
+                    <Button variant="outline">읽기</Button>
                   </CardFooter>
                 </Card>
               ))}
